@@ -2,7 +2,7 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { MongoClient } from "mongodb";
 
-const uri = process.env.MONGODB_URI!;
+const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/skillsphere";
 
 // Singleton MongoClient for Next.js (avoids "too many connections" in dev)
 const globalWithMongo = globalThis as typeof globalThis & {
