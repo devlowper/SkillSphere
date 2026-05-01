@@ -32,6 +32,28 @@ export default function UpdateProfilePage() {
     setPreview(url || null);
   };
 
+  const defaultAvatars = [
+    "https://api.dicebear.com/9.x/notionists/svg?seed=Felix",
+    "https://api.dicebear.com/9.x/notionists/svg?seed=Aneka",
+    "https://api.dicebear.com/9.x/notionists/svg?seed=Oliver",
+    "https://api.dicebear.com/9.x/notionists/svg?seed=Jack",
+  ];
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast.error("Image must be less than 5MB");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        handleImageChange(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
@@ -125,23 +147,55 @@ export default function UpdateProfilePage() {
             </div>
 
             <div>
-              <label htmlFor="update-image" className="block text-xs font-semibold text-base-content/60 mb-1.5 uppercase tracking-wide">
+              <label className="block text-xs font-semibold text-base-content/60 mb-3 uppercase tracking-wide">
                 <span className="flex items-center gap-1.5">
                   <HiOutlinePhotograph />
-                  Profile Image URL <span className="text-base-content/30">(optional)</span>
+                  Profile Image <span className="text-base-content/30">(optional)</span>
                 </span>
               </label>
-              <input
-                id="update-image"
-                type="url"
-                value={image}
-                onChange={(e) => handleImageChange(e.target.value)}
-                placeholder="https://example.com/avatar.jpg"
-                className="w-full px-4 py-3 rounded-xl border border-base-300 bg-base-100 text-base-content placeholder-base-content/30 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent text-sm transition-all"
-              />
-              {image && (
-                <p className="text-xs text-base-content/40 mt-1">Preview updates automatically above</p>
-              )}
+
+              <div className="space-y-4 p-5 border border-base-300 rounded-xl bg-base-100/50">
+                {/* Default Avatars */}
+                <div>
+                  <p className="text-xs text-center text-base-content/50 mb-3">Choose an avatar</p>
+                  <div className="flex justify-center gap-3">
+                    {defaultAvatars.map((avatar, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => handleImageChange(avatar)}
+                        className={`w-12 h-12 rounded-full border-2 transition-all ${
+                          image === avatar ? "border-green-500 scale-110 shadow-lg shadow-green-500/30" : "border-transparent hover:border-green-300 bg-base-200"
+                        }`}
+                      >
+                        <img src={avatar} alt={`Avatar ${i+1}`} className="w-full h-full rounded-full" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="relative flex items-center py-2">
+                  <div className="flex-grow border-t border-base-300"></div>
+                  <span className="flex-shrink-0 mx-4 text-xs text-base-content/40 uppercase tracking-widest">or</span>
+                  <div className="flex-grow border-t border-base-300"></div>
+                </div>
+
+                {/* Upload Custom */}
+                <div className="flex justify-center">
+                  <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-base-100 hover:bg-base-200 text-base-content rounded-xl text-sm font-medium transition-all border border-base-300 hover:border-green-400 shadow-sm w-full justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    Upload Custom Photo
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept="image/png, image/jpeg, image/webp"
+                      onChange={handleFileUpload}
+                    />
+                  </label>
+                </div>
+              </div>
             </div>
 
             <div className="flex gap-3 pt-2">

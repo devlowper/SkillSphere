@@ -18,6 +18,28 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
+  const defaultAvatars = [
+    "https://api.dicebear.com/9.x/notionists/svg?seed=Felix",
+    "https://api.dicebear.com/9.x/notionists/svg?seed=Aneka",
+    "https://api.dicebear.com/9.x/notionists/svg?seed=Oliver",
+    "https://api.dicebear.com/9.x/notionists/svg?seed=Jack",
+  ];
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast.error("Image must be less than 5MB");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoURL(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email || !password) {
@@ -53,7 +75,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-base-100 flex items-center justify-center py-12 px-4">
       <div className="w-full max-w-md">
-        <div className="bg-base-100 rounded-3xl border border-base-200 shadow-2xl shadow-base-300/50 p-8 sm:p-10">
+        <div className="bg-base-100 rounded-3xl border border-base-200 shadow-2xl shadow-base-300/50 p-8 sm:p-10 mt-10">
           {/* Logo */}
           <div className="text-center mb-8">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-green-200 dark:shadow-green-900">
@@ -116,17 +138,76 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="reg-photo" className="block text-xs font-semibold text-base-content/60 mb-1.5 uppercase tracking-wide">
-                Photo URL <span className="text-base-content/30">(optional)</span>
+              <label className="block text-xs font-semibold text-base-content/60 mb-1.5 uppercase tracking-wide">
+                Profile Photo <span className="text-base-content/30">(optional)</span>
               </label>
-              <input
-                id="reg-photo"
-                type="url"
-                value={photoURL}
-                onChange={(e) => setPhotoURL(e.target.value)}
-                placeholder="https://example.com/avatar.jpg"
-                className="w-full px-4 py-3 rounded-xl border border-base-300 bg-base-100 text-base-content placeholder-base-content/30 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent text-sm transition-all"
-              />
+              
+              <div className="flex flex-col items-center gap-4 p-5 border border-base-300 rounded-xl bg-base-100/50">
+                {/* Preview */}
+                <div className="relative group w-20 h-20">
+                  <div className="w-full h-full rounded-full overflow-hidden border-2 border-green-500 bg-base-200 shadow-inner">
+                    {photoURL ? (
+                      <img src={photoURL} alt="Profile preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-base-content/20 text-3xl">
+                        <HiOutlineAcademicCap />
+                      </div>
+                    )}
+                  </div>
+                  {photoURL && (
+                    <button
+                      type="button"
+                      onClick={() => setPhotoURL("")}
+                      className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+
+                <div className="w-full space-y-4">
+                  {/* Default Avatars */}
+                  <div>
+                    <p className="text-xs text-center text-base-content/50 mb-3">Choose an avatar</p>
+                    <div className="flex justify-center gap-3">
+                      {defaultAvatars.map((avatar, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => setPhotoURL(avatar)}
+                          className={`w-12 h-12 rounded-full border-2 transition-all ${
+                            photoURL === avatar ? "border-green-500 scale-110 shadow-lg shadow-green-500/30" : "border-transparent hover:border-green-300 bg-base-200"
+                          }`}
+                        >
+                          <img src={avatar} alt={`Avatar ${i+1}`} className="w-full h-full rounded-full" />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="relative flex items-center py-2">
+                    <div className="flex-grow border-t border-base-300"></div>
+                    <span className="flex-shrink-0 mx-4 text-xs text-base-content/40 uppercase tracking-widest">or</span>
+                    <div className="flex-grow border-t border-base-300"></div>
+                  </div>
+
+                  {/* Upload Custom */}
+                  <div className="flex justify-center">
+                    <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 bg-base-100 hover:bg-base-200 text-base-content rounded-xl text-sm font-medium transition-all border border-base-300 hover:border-green-400 shadow-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                      </svg>
+                      Upload Photo
+                      <input 
+                        type="file" 
+                        className="hidden" 
+                        accept="image/png, image/jpeg, image/webp"
+                        onChange={handleFileUpload}
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div>
