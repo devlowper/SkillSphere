@@ -1,14 +1,29 @@
 import { betterAuth } from "better-auth";
+import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { MongoClient } from "mongodb";
 
-const client = new MongoClient(process.env.MONGODB_URI as string);
-const db = client.db();
+const uri = process.env.MONGODB_URI!;
+
+// Singleton MongoClient for Next.js (avoids "too many connections" in dev)
+const globalWithMongo = globalThis as typeof globalThis & {
+  _mongoClientPromise?: Promise<MongoClient>;
+};
+
+if (!globalWithMongo._mongoClientPromise) {
+  const client = new MongoClient(uri);
+  globalWithMongo._mongoClientPromise = client.connect();
+}
+
+const clientPromise = globalWithMongo._mongoClientPromise;
+
+// Better Auth needs a synchronous Db reference.
+// MongoClient.db() does NOT require a connection — it just returns a Db handle.
+// The actual network call happens lazily on first query.
+const client = new MongoClient(uri);
+const db = client.db("skillsphere");
 
 export const auth = betterAuth({
-  database: {
-    db: db,
-    type: "mongodb",
-  },
+  database: mongodbAdapter(db),
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 6,
@@ -29,3 +44,5 @@ export const auth = betterAuth({
     },
   },
 });
+
+export { clientPromise };
