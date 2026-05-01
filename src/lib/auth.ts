@@ -1,13 +1,13 @@
 import { betterAuth } from "better-auth";
-import Database from "better-sqlite3";
-import path from "path";
+import { MongoClient } from "mongodb";
 
-const db = new Database(path.join(process.cwd(), "skillsphere.db"));
+const client = new MongoClient(process.env.MONGODB_URI as string);
+const db = client.db();
 
 export const auth = betterAuth({
   database: {
-    db,
-    type: "sqlite",
+    db: db,
+    type: "mongodb",
   },
   emailAndPassword: {
     enabled: true,
