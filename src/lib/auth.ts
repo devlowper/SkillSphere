@@ -21,6 +21,9 @@ const db = client.db("skillsphere");
 
 export const auth = betterAuth({
   database: mongodbAdapter(db),
+  secret: process.env.BETTER_AUTH_SECRET || "skillsphere_dev_secret_change_in_production_xyz123",
+  baseURL: process.env.BETTER_AUTH_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : undefined),
+  trustedOrigins: ["https://skill-sphere-snowy.vercel.app", "http://localhost:3000"],
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 6,
