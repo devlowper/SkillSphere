@@ -1,12 +1,11 @@
 "use client";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
+import { Autoplay, Pagination, EffectFade } from "swiper/modules";
 import { motion } from "motion/react";
 import Link from "next/link";
 import "swiper/css";
 import "swiper/css/pagination";
-import "swiper/css/navigation";
 import "swiper/css/effect-fade";
 
 const slides = [
@@ -52,11 +51,10 @@ export default function HeroSlider() {
   return (
     <section className="relative">
       <Swiper
-        modules={[Autoplay, Pagination, Navigation, EffectFade]}
+        modules={[Autoplay, Pagination, EffectFade]}
         effect="fade"
         autoplay={{ delay: 5000, disableOnInteraction: false }}
         pagination={{ clickable: true }}
-        navigation
         loop
         className="hero-swiper"
         style={{ height: "600px" } as React.CSSProperties}
