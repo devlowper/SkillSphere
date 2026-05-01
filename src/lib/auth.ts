@@ -2,9 +2,13 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { MongoClient } from "mongodb";
 
-const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/skillsphere";
+const uri = process.env.MONGODB_URI || (process.env.NODE_ENV === "development" ? "mongodb://127.0.0.1:27017/skillsphere" : undefined);
 
-// Singleton MongoClient for Next.js (avoids "too many connections" in dev)
+if (!uri) {
+  throw new Error("❌ MONGODB_URI IS MISSING IN VERCEL ENVIRONMENT VARIABLES!");
+}
+
+// Singleton MongoClient for Next.js
 const globalWithMongo = globalThis as typeof globalThis & {
   _mongoClientPromise?: Promise<MongoClient>;
   _mongoClient?: MongoClient;
@@ -12,7 +16,12 @@ const globalWithMongo = globalThis as typeof globalThis & {
 
 if (!globalWithMongo._mongoClient) {
   globalWithMongo._mongoClient = new MongoClient(uri);
-  globalWithMongo._mongoClientPromise = globalWithMongo._mongoClient.connect();
+  globalWithMongo._mongoClientPromise = globalWithMongo._mongoClient.connect().catch(err => {
+    // If it fails to connect, clear the cache so it can try again next time!
+    globalWithMongo._mongoClient = undefined;
+    globalWithMongo._mongoClientPromise = undefined;
+    throw err;
+  });
 }
 
 const client = globalWithMongo._mongoClient;
