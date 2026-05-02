@@ -1,30 +1,22 @@
-import { NextRequest, NextResponse } from "next/server";
-
-const protectedPaths = ["/my-profile", "/courses/"];
+import { NextResponse, type NextRequest } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const session = getSessionCookie(request);
 
-  const isProtected =
-    pathname.startsWith("/my-profile") ||
-    (pathname.startsWith("/courses/") && pathname !== "/courses");
-
-  if (!isProtected) return NextResponse.next();
-
-  // Check for better-auth session cookie
-  const sessionCookie =
-    request.cookies.get("better-auth.session_token") ||
-    request.cookies.get("__Secure-better-auth.session_token");
-
-  if (!sessionCookie?.value) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(loginUrl);
+  if (!session) {
+    const redirectUrl = new URL("/login", request.url);
+    redirectUrl.searchParams.set("redirect", request.nextUrl.pathname);
+    return NextResponse.redirect(redirectUrl);
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/courses/:path+", "/my-profile", "/my-profile/:path+"],
+  matcher: [
+    "/courses/:id(\\d+)",
+    "/courses/:id(\\d+)/:path*",
+    "/my-profile/:path*",
+  ],
 };
