@@ -68,7 +68,9 @@ export const auth = betterAuth({
   trustedOrigins: [
     "http://localhost:3000",
     "https://skill-sphere-snowy.vercel.app",
-  ],
+    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "",
+    "https://skill-sphere-ktqm-554v0nw5r-ahmedrakin45-9561s-projects.vercel.app"
+  ].filter(Boolean),
 
   emailAndPassword: {
     enabled: true,
