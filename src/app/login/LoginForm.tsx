@@ -37,6 +37,8 @@ export default function LoginForm() {
     }
   };
 
+  const googleEnabled = Boolean(process.env.NEXT_PUBLIC_GOOGLE_ENABLED);
+
   const handleGoogle = async () => {
     setGoogleLoading(true);
     await signIn.social({
@@ -59,26 +61,30 @@ export default function LoginForm() {
             <p className="text-sm text-base-content/50 mt-1">Sign in to continue learning</p>
           </div>
 
-          {/* Google Login */}
-          <button
-            onClick={handleGoogle}
-            disabled={googleLoading}
-            id="google-login-btn"
-            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-2xl border border-base-300 bg-base-100 hover:bg-base-200 transition-colors text-sm font-semibold text-base-content mb-6 disabled:opacity-50"
-          >
-            {googleLoading ? (
-              <span className="loading loading-spinner loading-xs text-green-500" />
-            ) : (
-              <FcGoogle className="text-xl" />
-            )}
-            Continue with Google
-          </button>
+          {/* Google Login — only shown when real OAuth credentials are configured */}
+          {googleEnabled && (
+            <>
+              <button
+                onClick={handleGoogle}
+                disabled={googleLoading}
+                id="google-login-btn"
+                className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-2xl border border-base-300 bg-base-100 hover:bg-base-200 transition-colors text-sm font-semibold text-base-content mb-6 disabled:opacity-50"
+              >
+                {googleLoading ? (
+                  <span className="loading loading-spinner loading-xs text-green-500" />
+                ) : (
+                  <FcGoogle className="text-xl" />
+                )}
+                Continue with Google
+              </button>
 
-          <div className="flex items-center gap-3 mb-6">
-            <div className="flex-1 h-px bg-base-200" />
-            <span className="text-xs text-base-content/40 font-medium">or continue with email</span>
-            <div className="flex-1 h-px bg-base-200" />
-          </div>
+              <div className="flex items-center gap-3 mb-6">
+                <div className="flex-1 h-px bg-base-200" />
+                <span className="text-xs text-base-content/40 font-medium">or continue with email</span>
+                <div className="flex-1 h-px bg-base-200" />
+              </div>
+            </>
+          )}
 
           {/* Form */}
           <form onSubmit={handleLogin} className="space-y-4">
