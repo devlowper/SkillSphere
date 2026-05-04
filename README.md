@@ -79,13 +79,7 @@ Copy `.env.example` to `.env.local` and fill in your values:
 cp .env.example .env.local
 ```
 
-```env
-BETTER_AUTH_SECRET=your-random-secret-key
-BETTER_AUTH_URL=http://localhost:3000
-NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-```
+
 
 > **Google OAuth Setup**: Go to [Google Cloud Console](https://console.cloud.google.com), create OAuth 2.0 credentials, and add `http://localhost:3000/api/auth/callback/google` as an authorized redirect URI.
 
@@ -124,8 +118,8 @@ src/
 | Variable | Description |
 |---|---|
 | `BETTER_AUTH_SECRET` | Random secret for session signing |
-| `BETTER_AUTH_URL` | Base URL of your app (server-side) |
-| `NEXT_PUBLIC_BETTER_AUTH_URL` | Base URL of your app (client-side) |
+| `BETTER_AUTH_URL` | Base URL of  (server-side) |
+| `NEXT_PUBLIC_BETTER_AUTH_URL` | Base URL of (client-side) |
 | `GOOGLE_CLIENT_ID` | Google OAuth Client ID |
 | `GOOGLE_CLIENT_SECRET` | Google OAuth Client Secret |
 
