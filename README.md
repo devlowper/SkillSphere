@@ -92,31 +92,8 @@ npm install
 
 > If you encounter peer dependency conflicts, use `npm install --legacy-peer-deps`
 
-### 3. Configure environment variables
 
-Copy the example file and fill in your values:
-
-```bash
-cp .env.example .env.local
-```
-
-```env
-# BetterAuth
-BETTER_AUTH_SECRET=your_random_secret_string
-BETTER_AUTH_URL=http://localhost:3000
-NEXT_PUBLIC_BETTER_AUTH_URL=http://localhost:3000
-
-# Google OAuth
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-
-# MongoDB
-MONGODB_URI=your_mongodb_connection_string
-```
-
-> **Google OAuth setup:** In Google Cloud Console, add `http://localhost:3000` to authorized origins and `http://localhost:3000/api/auth/callback/google` to redirect URIs.
-
-### 4. Run the development server
+### 3. Run the development server
 
 ```bash
 npm run dev
